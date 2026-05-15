@@ -5,7 +5,7 @@ import { TablaCrianza } from './components/TablaCrianza';
 import { TablaCarniceria } from './components/TablaCarniceria';
 import { TablaProductos } from './components/TablaProductos';
 import { usePrecios } from './hooks/usePrecios';
-import './App.css';
+import './index.css';
 
 function App() {
   const { config, resultados, cargando, timestamp, updateConfig, updatePrecio, refreshFromAPI } = usePrecios();
@@ -17,16 +17,16 @@ function App() {
     setSelectedType(type);
   };
 
-  if (cargando) return <div className="loading">🔄 Cargando datos...</div>;
+  if (cargando) return <div className="loading">🔄 Cargando datos del mercado...</div>;
 
   return (
     <div className="container">
       <ConfigPanel config={config} onUpdateConfig={updateConfig} onRefresh={refreshFromAPI} />
       <ResumenVertical resultados={resultados} selectedTier={selectedTier} selectedType={selectedType} />
-      <TablaCrianza resultados={resultados.cria} preciosManuales={resultados.cria} onUpdatePrecio={updatePrecio} selectedTier={selectedTier} onSelectTier={handleSelect} />
+      <TablaCrianza resultados={resultados.cria} onUpdatePrecio={updatePrecio} selectedTier={selectedTier} onSelectTier={handleSelect} />
       <TablaCarniceria resultados={resultados.carniceria} onUpdatePrecio={updatePrecio} selectedTier={selectedTier} onSelectTier={handleSelect} />
       <TablaProductos resultados={resultados} onUpdatePrecio={updatePrecio} selectedTier={selectedTier} onSelectTier={handleSelect} />
-      <div className="timestamp">{timestamp}</div>
+      <div className="timestamp">Última actualización API: {timestamp}</div>
     </div>
   );
 }
