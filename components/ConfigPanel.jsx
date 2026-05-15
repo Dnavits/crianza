@@ -6,7 +6,7 @@ export const ConfigPanel = ({ config, onUpdateConfig, onRefresh }) => {
   };
 
   return (
-    <div className="glass-panel config-panel">
+    <div className="glass-panel">
       <div className="config-grid">
         <div className="config-item">
           <label>🌍 REGIÓN</label>
@@ -25,19 +25,22 @@ export const ConfigPanel = ({ config, onUpdateConfig, onRefresh }) => {
         <div className="config-item">
           <label>⭐ PREMIUM</label>
           <select value={config.premium} onChange={(e) => handleChange('premium', e.target.value === 'true')}>
-            <option value="true">Sí</option><option value="false">No</option>
+            <option value="true">Sí</option>
+            <option value="false">No</option>
           </select>
         </div>
         <div className="config-item">
           <label>✨ USO DE FOCO</label>
           <select value={config.focus} onChange={(e) => handleChange('focus', e.target.value === 'true')}>
-            <option value="false">No</option><option value="true">Sí</option>
+            <option value="false">No</option>
+            <option value="true">Sí</option>
           </select>
         </div>
         <div className="config-item">
           <label>🏅 BONIF. CIUDAD</label>
           <select value={config.cityBonus} onChange={(e) => handleChange('cityBonus', e.target.value === 'true')}>
-            <option value="false">No</option><option value="true">Sí</option>
+            <option value="false">No</option>
+            <option value="true">Sí</option>
           </select>
         </div>
         <div className="config-item">
