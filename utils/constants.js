@@ -17,7 +17,7 @@ export const tierNombres = {
   8: { bebe: "Ternero", adulto: "Vaca", comida: "Calabaza", producto: "Leche de Vaca", carne: "Carne de Ternera" }
 };
 
-// IDs de la API
+// IDs internos de la API
 export const itemsIds = {
   3: { bebe: "T3_CHICKEN", adulto: "T3_CHICKEN", comida: "T3_WHEAT", producto: "T3_EGG", carne: "T3_MEAT_CHICKEN" },
   4: { bebe: "T4_GOAT", adulto: "T4_GOAT", comida: "T4_RADISH", producto: "T4_GOAT_MILK", carne: "T4_MEAT_GOAT" },
