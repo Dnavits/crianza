@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Albion Online · Calculadora de Crianza · Resumen Vertical</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 10% 20%, #0a0f1e, #03060c);
+            padding: 2rem 1.5rem;
+            color: #eef2ff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .glass-panel {
+            background: rgba(12, 20, 35, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(72, 187, 255, 0.2);
+            border-radius: 2rem;
+            padding: 1.2rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #a855f7, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .badge {
+            background: #1e293b;
+            padding: 0.3rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #94a3b8;
+        }
+
+        .config-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            align-items: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .config-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            min-width: 130px;
+        }
+
+        .config-item label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: #9ca3af;
+        }
+
+        .config-item select,
+        .config-item input {
+            background: #0f172a;
+            border: 1px solid #2d3a5e;
+            border-radius: 1.2rem;
+            padding: 0.5rem 1rem;
+            color: white;
+            font-weight: 500;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .config-item select:focus,
+        .config-item input:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3);
+        }
+
+        button {
+            background: linear-gradient(95deg, #2563eb, #7c3aed);
+            border: none;
+            border-radius: 2rem;
+            padding: 0.55rem 1.8rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .section-card {
+            background: rgba(8, 14, 26, 0.6);
+            backdrop-filter: blur(4px);
+            border-radius: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow-x: auto;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            padding: 1.2rem 1.5rem 0.8rem 1.5rem;
+            border-left: 4px solid #38bdf8;
+            margin-left: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            min-width: 800px;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.9rem 0.8rem;
+            background: rgba(30, 41, 59, 0.5);
+            font-weight: 600;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+            color: #cbd5e6;
+        }
+
+        td {
+            padding: 0.7rem 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        tr:hover td {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .profit-positive {
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        .profit-negative {
+            color: #f87171;
+        }
+
+        .price-input {
+            background: #0f172a;
+            border: 1px solid #2d3a5e;
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.5rem;
+            color: white;
+            width: 100px;
+            text-align: center;
+        }
+
+        .selector-col {
+            width: 40px;
+            text-align: center;
+        }
+
+        /* Resumen vertical */
+        .resumen-vertical {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            margin: 1rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .resumen-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .resumen-item:last-child {
+            border-bottom: none;
+        }
+
+        .resumen-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #cbd5e6;
+        }
+
+        .resumen-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .resumen-titulo {
+            font-size: 1.1rem;
+            font-weight: bold;
+            background: #0f172a;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .config-grid { flex-direction: column; align-items: stretch; }
+            .resumen-value { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="glass-panel">
+        <div class="header">
+            <h1>🐣 CRIANZA · Albion Online</h1>
+            <div class="badge">🔄 Precios editables + API</div>
+        </div>
+        <div class="config-grid">
+            <div class="config-item"><label>🌍 REGIÓN</label><select id="regionSelect"><option value="americas" selected>Américas</option><option value="europe">Europa</option><option value="asia">Asia</option></select></div>
+            <div class="config-item"><label>🏙️ CIUDAD</label><select id="citySelect"><option value="Martlock">Martlock</option><option value="Thetford">Thetford</option><option value="Fort Sterling">Fort Sterling</option><option value="Lymhurst">Lymhurst</option><option value="Bridgewatch">Bridgewatch</option><option value="Caerleon">Caerleon</option></select></div>
+            <div class="config-item"><label>⭐ PREMIUM</label><select id="premiumSelect"><option value="true">Sí</option><option value="false">No</option></select></div>
+            <div class="config-item"><label>✨ USO DE FOCO</label><select id="focoSelect"><option value="false">No</option><option value="true">Sí</option></select></div>
+            <div class="config-item"><label>🏅 BONIF. CIUDAD</label><select id="cityBonusSelect"><option value="false">No</option><option value="true">Sí</option></select></div>
+            <div class="config-item"><label>📦 PARCELAS</label><input type="number" id="plotsInput" value="16" step="1" min="1"></div>
+            <div class="config-item"><label>⚡ ESTACIÓN (fee)</label><input type="number" id="estacionInput" value="729" step="1"></div>
+            <div class="config-item"><button id="refreshBtn">⟳ ACTUALIZAR DATOS</button></div>
+        </div>
+    </div>
+    <div id="appContent"><div class="loading">🔄 Cargando datos de mercado...</div></div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // ICONOS REALES POR TIER
+    // --------------------------------------------------------------
+    const tierIconos = {
+        3: { bebe: "🐤", adulto: "🐔", comida: "🌾", carne: "🍗", producto: "🥚", emojiProd: "🥚" },
+        4: { bebe: "🐐", adulto: "🐐", comida: "🥕", carne: "🥩", producto: "🥛", emojiProd: "🥛" },
+        5: { bebe: "🦢", adulto: "🦆", comida: "🥬", carne: "🥩", producto: "🥚", emojiProd: "🥚" },
+        6: { bebe: "🐏", adulto: "🐑", comida: "🥔", carne: "🥩", producto: "🥛", emojiProd: "🥛" },
+        7: { bebe: "🐖", adulto: "🐷", comida: "🌽", carne: "🥩", producto: null, emojiProd: "❌" },
+        8: { bebe: "🐄", adulto: "🐮", comida: "🎃", carne: "🥩", producto: "🥛", emojiProd: "🥛" }
+    };
+
+    const tierNombres = {
+        3: { bebe: "Pollito", adulto: "Pollo", comida: "Manojo de trigo", producto: "Huevos de Gallina", carne: "Carne de Pollo" },
+        4: { bebe: "Cabrito", adulto: "Cabra", comida: "Rábanos", producto: "Leche de Cabra", carne: "Carne de Cabra" },
+        5: { bebe: "Ansarino", adulto: "Ganso", comida: "Coles", producto: "Huevos de Ganso", carne: "Carne de Ganso" },
+        6: { bebe: "Cordero", adulto: "Oveja", comida: "Patatas", producto: "Leche de Oveja", carne: "Carne de Carnero" },
+        7: { bebe: "Lechón", adulto: "Cerdo", comida: "Fardo de maíz", producto: null, carne: "Carne de Cerdo" },
+        8: { bebe: "Ternero", adulto: "Vaca", comida: "Calabaza", producto: "Leche de Vaca", carne: "Carne de Ternera" }
+    };
+
+    const itemsIds = {
+        3: { bebe: "T3_CHICKEN", adulto: "T3_CHICKEN", comida: "T3_WHEAT", producto: "T3_EGG", carne: "T3_MEAT_CHICKEN" },
+        4: { bebe: "T4_GOAT", adulto: "T4_GOAT", comida: "T4_RADISH", producto: "T4_GOAT_MILK", carne: "T4_MEAT_GOAT" },
+        5: { bebe: "T5_GOOSE", adulto: "T5_GOOSE", comida: "T5_CABBAGE", producto: "T5_GOOSE_EGG", carne: "T5_MEAT_GOOSE" },
+        6: { bebe: "T6_SHEEP", adulto: "T6_SHEEP", comida: "T6_POTATO", producto: "T6_SHEEP_MILK", carne: "T6_MEAT_SHEEP" },
+        7: { bebe: "T7_PIG", adulto: "T7_PIG", comida: "T7_CORN", producto: null, carne: "T7_MEAT_PIG" },
+        8: { bebe: "T8_CALF", adulto: "T8_CALF", comida: "T8_PUMPKIN", producto: "T8_COW_MILK", carne: "T8_MEAT_CALF" }
+    };
+
+    const focusNewPercent = {
+        3: { noFocus: 60, focus: 140 }, 4: { noFocus: 73.33, focus: 126.66 }, 5: { noFocus: 80, focus: 120 },
+        6: { noFocus: 86.67, focus: 113.34 }, 7: { noFocus: 91.11, focus: 108.89 }, 8: { noFocus: 93.33, focus: 106.66 }
+    };
+
+    const FALLBACK_PRICES = {
+        "T3_CHICKEN": 5648, "T3_WHEAT": 499, "T3_MEAT_CHICKEN": 376, "T3_EGG": 64,
+        "T4_GOAT": 8185, "T4_RADISH": 403, "T4_MEAT_GOAT": 379, "T4_GOAT_MILK": 500,
+        "T5_GOOSE": 10998, "T5_CABBAGE": 487, "T5_MEAT_GOOSE": 410, "T5_GOOSE_EGG": 351,
+        "T6_SHEEP": 14999, "T6_POTATO": 489, "T6_MEAT_SHEEP": 393, "T6_SHEEP_MILK": 409,
+        "T7_PIG": 34885, "T7_CORN": 483, "T7_MEAT_PIG": 394,
+        "T8_CALF": 34987, "T8_PUMPKIN": 424, "T8_MEAT_CALF": 427, "T8_COW_MILK": 317
+    };
+
+    function cityBonusMult(hasBonus) { return hasBonus ? 1.218 : 1.152; }
+    function baseProductUnits(hasBonus) { return hasBonus ? 22 : 17; }
+    function meatUnitsPerDay(plots, hasBonus) { return 18 * cityBonusMult(hasBonus) * plots * 9; }
+
+    async function fetchHistoricalPrices(region, city) {
+        const allIds = new Set();
+        for (let t of [3,4,5,6,7,8]) {
+            allIds.add(itemsIds[t].bebe);
+            allIds.add(itemsIds[t].adulto);
+            allIds.add(itemsIds[t].comida);
+            if (itemsIds[t].producto) allIds.add(itemsIds[t].producto);
+            allIds.add(itemsIds[t].carne);
+        }
+        const idsParam = Array.from(allIds).join(',');
+        const pricesUrl = `https://${region}.albion-online-data.com/api/v2/stats/prices/${idsParam}?locations=${encodeURIComponent(city)}`;
+        const historyUrl = `https://${region}.albion-online-data.com/api/v2/stats/history/${idsParam}?locations=${encodeURIComponent(city)}&time-scale=24`;
+        try {
+            const [pricesRes, historyRes] = await Promise.all([fetch(pricesUrl), fetch(historyUrl)]);
+            let priceData = [], historyData = [];
+            if (pricesRes.ok) priceData = await pricesRes.json();
+            if (historyRes.ok) historyData = await historyRes.json();
+            const finalPriceMap = new Map();
+            for (const [id, p] of Object.entries(FALLBACK_PRICES)) finalPriceMap.set(id, p);
+            if (Array.isArray(priceData)) {
+                for (let item of priceData) {
+                    if (item && item.item_id && item.sell_price_min > 0) finalPriceMap.set(item.item_id, item.sell_price_min);
+                }
+            }
+            if (Array.isArray(historyData)) {
+                for (let item of historyData) {
+                    if (item && item.item_id && item.avg_price > 0) finalPriceMap.set(item.item_id, Math.round(item.avg_price));
+                }
+            }
+            return { priceMap: finalPriceMap };
+        } catch(err) {
+            console.error(err);
+            const fallbackMap = new Map();
+            for (const [id, p] of Object.entries(FALLBACK_PRICES)) fallbackMap.set(id, p);
+            return { priceMap: fallbackMap };
+        }
+    }
+
+    function calcularTodo(priceMap, config) {
+        const { plots, premium, focus, cityBonus, estacion } = config;
+        const tax = premium ? 6.5 : 10.5;
+        const taxFactor = 1 - (tax / 100);
+        const baseProdUnits = baseProductUnits(cityBonus);
+        let resultados = { cria: [], carniceria: [], productos: [] };
+        for (let tier of [3,4,5,6,7,8]) {
+            const babyId = itemsIds[tier].bebe;
+            const adultId = itemsIds[tier].adulto;
+            const foodId = itemsIds[tier].comida;
+            const babyPrice = priceMap.get(babyId) || 0;
+            const adultPrice = priceMap.get(adultId) || 0;
+            const foodPrice = priceMap.get(foodId) || 0;
+            const newPercent = focus ? focusNewPercent[tier].focus : focusNewPercent[tier].noFocus;
+            const newCrias = (plots * 9) * (newPercent / 100);
+            const revenueAdults = plots * 9 * adultPrice * taxFactor;
+            const revenueNewCrias = babyPrice * newCrias;
+            const costBuyInitial = babyPrice * 9 * plots;
+            const costFood = 81 * foodPrice * plots;
+            const profitWithFood = revenueAdults + revenueNewCrias - costBuyInitial - costFood;
+            const profitWithoutFood = revenueAdults + revenueNewCrias - costBuyInitial;
+            resultados.cria.push({ tier, babyPrice, adultPrice, foodPrice, newPercent, newCrias, profitWithFood, profitWithoutFood });
+
+            const meatId = itemsIds[tier].carne;
+            const meatPrice = priceMap.get(meatId) || 0;
+            const meatUnits = meatUnitsPerDay(plots, cityBonus);
+            const meatRevenue = meatUnits * meatPrice * taxFactor;
+            resultados.carniceria.push({ tier, meatPrice, meatUnits, meatRevenue });
+
+            if (itemsIds[tier].producto) {
+                const prodId = itemsIds[tier].producto;
+                const prodPrice = priceMap.get(prodId) || 0;
+                const prodUnits = baseProdUnits * plots * 9;
+                const prodRevenue = prodUnits * prodPrice * taxFactor;
+                const prodCostFood = 81 * foodPrice * plots;
+                resultados.productos.push({ tier, prodPrice, prodUnits, profitSinComida: prodRevenue, profitConComida: prodRevenue - prodCostFood, prodId, foodPrice });
+            } else {
+                resultados.productos.push({ tier, prodPrice: 0, profitSinComida: 0, profitConComida: 0 });
+            }
+        }
+        return { resultados };
+    }
+
+    function recalcularDesdeInputs(config, preciosManuales) {
+        const { plots, premium, focus, cityBonus, estacion } = config;
+        const tax = premium ? 6.5 : 10.5;
+        const taxFactor = 1 - (tax / 100);
+        const baseProdUnits = baseProductUnits(cityBonus);
+        let resultados = { cria: [], carniceria: [], productos: [] };
+        for (let tier of [3,4,5,6,7,8]) {
+            const babyId = itemsIds[tier].bebe;
+            const adultId = itemsIds[tier].adulto;
+            const foodId = itemsIds[tier].comida;
+            const babyPrice = preciosManuales.get(babyId) || 0;
+            const adultPrice = preciosManuales.get(adultId) || 0;
+            const foodPrice = preciosManuales.get(foodId) || 0;
+            const newPercent = focus ? focusNewPercent[tier].focus : focusNewPercent[tier].noFocus;
+            const newCrias = (plots * 9) * (newPercent / 100);
+            const revenueAdults = plots * 9 * adultPrice * taxFactor;
+            const revenueNewCrias = babyPrice * newCrias;
+            const costBuyInitial = babyPrice * 9 * plots;
+            const costFood = 81 * foodPrice * plots;
+            const profitWithFood = revenueAdults + revenueNewCrias - costBuyInitial - costFood;
+            const profitWithoutFood = revenueAdults + revenueNewCrias - costBuyInitial;
+            resultados.cria.push({ tier, babyPrice, adultPrice, foodPrice, newPercent, newCrias, profitWithFood, profitWithoutFood });
+
+            const meatId = itemsIds[tier].carne;
+            const meatPrice = preciosManuales.get(meatId) || 0;
+            const meatUnits = meatUnitsPerDay(plots, cityBonus);
+            const meatRevenue = meatUnits * meatPrice * taxFactor;
+            resultados.carniceria.push({ tier, meatPrice, meatUnits, meatRevenue });
+
+            if (itemsIds[tier].producto) {
+                const prodId = itemsIds[tier].producto;
+                const prodPrice = preciosManuales.get(prodId) || 0;
+                const prodUnits = baseProdUnits * plots * 9;
+                const prodRevenue = prodUnits * prodPrice * taxFactor;
+                const prodCostFood = 81 * foodPrice * plots;
+                resultados.productos.push({ tier, prodPrice, prodUnits, profitSinComida: prodRevenue, profitConComida: prodRevenue - prodCostFood, prodId, foodPrice });
+            } else {
+                resultados.productos.push({ tier, prodPrice: 0, profitSinComida: 0, profitConComida: 0 });
+            }
+        }
+        return { resultados };
+    }
+
+    // Formateador de números con miles
+    function formatNumber(num) {
+        return new Intl.NumberFormat('es-ES').format(Math.round(num));
+    }
+
+    function renderUI(resultados, config, timestamp) {
+        const { region, city } = config;
+        let html = `
+            <div class="section-card">
+                <div class="section-title">🐣 CRIANZA</div>
+                <table>
+                    <thead>
+                        <tr><th class="selector-col"></th><th>Tier</th><th>Animal (cría/adulto)</th><th>Precio cría</th><th>Precio adulto</th><th>Comida favorita</th><th>Precio comida</th><th>% Nuevas</th><th>Nuevas/día</th><th>Profit con comida</th><th>Profit sin comida</th></tr>
+                    </thead>
+                    <tbody>`;
+        for (let r of resultados.cria) {
+            const iconoCria = tierIconos[r.tier].bebe;
+            const iconoAdulto = tierIconos[r.tier].adulto;
+            const iconoComida = tierIconos[r.tier].comida;
+            html += `<tr data-tipo="cria" data-tier="${r.tier}">
+                <td class="selector-col"><input type="radio" name="selectorGlobal" value="cria-${r.tier}" class="selector-radio"></td>
+                <td>${r.tier}</td>
+                <td>${iconoCria} ${tierNombres[r.tier].bebe} / ${iconoAdulto} ${tierNombres[r.tier].adulto}</td>
+                <td><input type="number" class="price-input" data-item="${itemsIds[r.tier].bebe}" value="${r.babyPrice}" step="1" style="width:100px"></td>
+                <td><input type="number" class="price-input" data-item="${itemsIds[r.tier].adulto}" value="${r.adultPrice}" step="1" style="width:100px"></td>
+                <td>${iconoComida} ${tierNombres[r.tier].comida}</td>
+                <td><input type="number" class="price-input" data-item="${itemsIds[r.tier].comida}" value="${r.foodPrice}" step="1" style="width:100px"></td>
+                <td>${r.newPercent}%</td>
+                <td>${r.newCrias.toFixed(1)}</td>
+                <td class="profit-cell profit-with-food-${r.tier} ${r.profitWithFood>=0?'profit-positive':'profit-negative'}">${formatNumber(r.profitWithFood)}</td>
+                <td class="profit-cell profit-without-food-${r.tier} ${r.profitWithoutFood>=0?'profit-positive':'profit-negative'}">${formatNumber(r.profitWithoutFood)}</td>
+            </tr>`;
+        }
+        html += `</tbody></table></div>`;
+
+        html += `<div class="section-card"><div class="section-title">🥩 CARNICERÍA</div>
+        <table><thead><tr><th class="selector-col"></th><th>Tier</th><th>Carne</th><th>Precio unidad</th><th>Unidades/día</th><th>Ingreso neto diario</th></tr></thead><tbody>`;
+        for (let m of resultados.carniceria) {
+            const iconoCarne = tierIconos[m.tier].carne;
+            html += `<tr data-tipo="carne" data-tier="${m.tier}">
+                <td class="selector-col"><input type="radio" name="selectorGlobal" value="carne-${m.tier}" class="selector-radio"></td>
+                <td>${m.tier}</td>
+                <td>${iconoCarne} ${tierNombres[m.tier].carne}</td>
+                <td><input type="number" class="price-input" data-item="${itemsIds[m.tier].carne}" value="${m.meatPrice}" step="1" style="width:100px"></td>
+                <td>${m.meatUnits.toFixed(0)}</td>
+                <td class="profit-cell meat-profit-${m.tier} ${m.meatRevenue>=0?'profit-positive':'profit-negative'}">${formatNumber(m.meatRevenue)}</td>
+            </tr>`;
+        }
+        html += `</tbody></table></div>`;
+
+        html += `<div class="section-card"><div class="section-title">🧺 PRODUCTOS</div>
+        <table><thead><tr><th class="selector-col"></th><th>Tier</th><th>Producto</th><th>Precio unidad</th><th>Unidades/día</th><th>Profit sin comida</th><th>Profit restando comida</th></tr></thead><tbody>`;
+        for (let p of resultados.productos) {
+            if (p.tier === 7) continue;
+            if (p.prodPrice === 0 && !tierNombres[p.tier].producto) {
+                html += `<tr><td class="selector-col"></td><td colspan="6">Sin producto disponible</td></tr>`;
+            } else {
+                const iconoProd = tierIconos[p.tier].producto;
+                html += `<tr data-tipo="producto" data-tier="${p.tier}">
+                    <td class="selector-col"><input type="radio" name="selectorGlobal" value="producto-${p.tier}" class="selector-radio"></td>
+                    <td>${p.tier}</td>
+                    <td>${iconoProd} ${tierNombres[p.tier].producto}</td>
+                    <td><input type="number" class="price-input" data-item="${itemsIds[p.tier].producto}" value="${p.prodPrice}" step="1" style="width:100px"></td>
+                    <td>${p.prodUnits.toFixed(0)}</td>
+                    <td class="profit-cell product-sin-${p.tier} profit-positive">${formatNumber(p.profitSinComida)}</td>
+                    <td class="profit-cell product-con-${p.tier} ${p.profitConComida>=0?'profit-positive':'profit-negative'}">${formatNumber(p.profitConComida)}</td>
+                </tr>`;
+            }
+        }
+        html += `</tbody></table></div>`;
+        html += `<div style="text-align: center; font-size:0.7rem; margin-top:1rem; opacity:0.6;">Última actualización API: ${timestamp} · ${region} - ${city}</div>`;
+        return html;
+    }
+
+    function actualizarTodo(container, config, preciosManuales) {
+        const { resultados } = recalcularDesdeInputs(config, preciosManuales);
+        for (let r of resultados.cria) {
+            const withCell = container.querySelector(`.profit-with-food-${r.tier}`);
+            const withoutCell = container.querySelector(`.profit-without-food-${r.tier}`);
+            if (withCell) { withCell.textContent = formatNumber(r.profitWithFood); withCell.className = `profit-cell profit-with-food-${r.tier} ${r.profitWithFood>=0?'profit-positive':'profit-negative'}`; }
+            if (withoutCell) { withoutCell.textContent = formatNumber(r.profitWithoutFood); withoutCell.className = `profit-cell profit-without-food-${r.tier} ${r.profitWithoutFood>=0?'profit-positive':'profit-negative'}`; }
+        }
+        for (let m of resultados.carniceria) {
+            const cell = container.querySelector(`.meat-profit-${m.tier}`);
+            if (cell) { cell.textContent = formatNumber(m.meatRevenue); cell.className = `profit-cell meat-profit-${m.tier} ${m.meatRevenue>=0?'profit-positive':'profit-negative'}`; }
+        }
+        for (let p of resultados.productos) {
+            if (p.tier === 7) continue;
+            const sinCell = container.querySelector(`.product-sin-${p.tier}`);
+            const conCell = container.querySelector(`.product-con-${p.tier}`);
+            if (sinCell) sinCell.textContent = formatNumber(p.profitSinComida);
+            if (conCell) { conCell.textContent = formatNumber(p.profitConComida); conCell.className = `profit-cell product-con-${p.tier} ${p.profitConComida>=0?'profit-positive':'profit-negative'}`; }
+        }
+
+        const selectedRadio = document.querySelector('input[name="selectorGlobal"]:checked');
+        if (selectedRadio) {
+            const [tipo, tierStr] = selectedRadio.value.split('-');
+            const tier = parseInt(tierStr);
+            if (tipo === 'cria') {
+                const cria = resultados.cria.find(c => c.tier === tier);
+                if (cria) {
+                    document.getElementById('resumenConDiario').innerHTML = formatNumber(cria.profitWithFood);
+                    document.getElementById('resumenConMensual').innerHTML = formatNumber(cria.profitWithFood*30);
+                    document.getElementById('resumenSinDiario').innerHTML = formatNumber(cria.profitWithoutFood);
+                    document.getElementById('resumenSinMensual').innerHTML = formatNumber(cria.profitWithoutFood*30);
+                    document.getElementById('resumenTitulo').innerHTML = `🐣 Crianza Tier ${tier}`;
+                }
+            } else if (tipo === 'carne') {
+                const carne = resultados.carniceria.find(c => c.tier === tier);
+                if (carne) {
+                    document.getElementById('resumenConDiario').innerHTML = formatNumber(carne.meatRevenue);
+                    document.getElementById('resumenConMensual').innerHTML = formatNumber(carne.meatRevenue*30);
+                    document.getElementById('resumenSinDiario').innerHTML = '-';
+                    document.getElementById('resumenSinMensual').innerHTML = '-';
+                    document.getElementById('resumenTitulo').innerHTML = `🥩 Carnicería Tier ${tier}`;
+                }
+            } else if (tipo === 'producto') {
+                const prod = resultados.productos.find(p => p.tier === tier);
+                if (prod) {
+                    document.getElementById('resumenConDiario').innerHTML = formatNumber(prod.profitConComida);
+                    document.getElementById('resumenConMensual').innerHTML = formatNumber(prod.profitConComida*30);
+                    document.getElementById('resumenSinDiario').innerHTML = formatNumber(prod.profitSinComida);
+                    document.getElementById('resumenSinMensual').innerHTML = formatNumber(prod.profitSinComida*30);
+                    document.getElementById('resumenTitulo').innerHTML = `🧺 Producto Tier ${tier}`;
+                }
+            }
+        }
+    }
+
+    let currentConfig = null;
+    let currentPreciosManuales = new Map();
+    let currentContainer = null;
+
+    async function refresh() {
+        const region = document.getElementById('regionSelect').value;
+        const city = document.getElementById('citySelect').value;
+        const premium = document.getElementById('premiumSelect').value === 'true';
+        const focus = document.getElementById('focoSelect').value === 'true';
+        const cityBonus = document.getElementById('cityBonusSelect').value === 'true';
+        const plots = parseInt(document.getElementById('plotsInput').value) || 16;
+        const estacion = parseInt(document.getElementById('estacionInput').value) || 729;
+        const appDiv = document.getElementById('appContent');
+        appDiv.innerHTML = '<div class="loading">🔍 Cargando datos...</div>';
+
+        const { priceMap } = await fetchHistoricalPrices(region, city);
+        currentConfig = { region, city, premium, focus, cityBonus, plots, estacion };
+        currentPreciosManuales.clear();
+        for (let [k, v] of priceMap.entries()) currentPreciosManuales.set(k, v);
+
+        const { resultados } = calcularTodo(priceMap, currentConfig);
+        const timestamp = new Date().toLocaleTimeString();
+
+        let fullHtml = `
+            <div class="section-card">
+                <div class="section-title">📊 RESUMEN DE GANANCIAS</div>
+                <div class="resumen-vertical">
+                    <div style="text-align: center;">
+                        <span class="resumen-titulo" id="resumenTitulo">Ninguno seleccionado</span>
+                    </div>
+                    <div class="resumen-item">
+                        <span class="resumen-label">💰 Profit diario (comprando comida)</span>
+                        <span class="resumen-value" id="resumenConDiario">0</span>
+                    </div>
+                    <div class="resumen-item">
+                        <span class="resumen-label">📆 Profit mensual (comprando comida)</span>
+                        <span class="resumen-value" id="resumenConMensual">0</span>
+                    </div>
+                    <div class="resumen-item">
+                        <span class="resumen-label">🌾 Profit diario (sin comprar comida)</span>
+                        <span class="resumen-value" id="resumenSinDiario">0</span>
+                    </div>
+                    <div class="resumen-item">
+                        <span class="resumen-label">📆 Profit mensual (sin comprar comida)</span>
+                        <span class="resumen-value" id="resumenSinMensual">0</span>
+                    </div>
+                </div>
+            </div>
+            <div id="tablasContainer"></div>
+        `;
+        appDiv.innerHTML = fullHtml;
+        const tablasContainer = document.getElementById('tablasContainer');
+        tablasContainer.innerHTML = renderUI(resultados, currentConfig, timestamp);
+        currentContainer = tablasContainer;
+
+        const inputs = document.querySelectorAll('.price-input');
+        inputs.forEach(inp => {
+            inp.addEventListener('change', (e) => {
+                const itemId = inp.dataset.item;
+                const newVal = parseFloat(inp.value);
+                if (!isNaN(newVal)) currentPreciosManuales.set(itemId, newVal);
+                actualizarTodo(currentContainer, currentConfig, currentPreciosManuales);
+            });
+        });
+
+        const radios = document.querySelectorAll('.selector-radio');
+        const updateResumenFromRadio = () => {
+            const selected = document.querySelector('input[name="selectorGlobal"]:checked');
+            if (!selected) return;
+            const [tipo, tierStr] = selected.value.split('-');
+            const tier = parseInt(tierStr);
+            if (tipo === 'cria') {
+                const cria = resultados.cria.find(c => c.tier === tier);
+                if (cria) {
+                    document.getElementById('resumenConDiario').innerHTML = formatNumber(cria.profitWithFood);
+                    document.getElementById('resumenConMensual').innerHTML = formatNumber(cria.profitWithFood*30);
+                    document.getElementById('resumenSinDiario').innerHTML = formatNumber(cria.profitWithoutFood);
+                    document.getElementById('resumenSinMensual').innerHTML = formatNumber(cria.profitWithoutFood*30);
+                    document.getElementById('resumenTitulo').innerHTML = `🐣 Crianza Tier ${tier}`;
+                }
+            } else if (tipo === 'carne') {
+                const carne = resultados.carniceria.find(c => c.tier === tier);
+                if (carne) {
+                    document.getElementById('resumenConDiario').innerHTML = formatNumber(carne.meatRevenue);
+                    document.getElementById('resumenConMensual').innerHTML = formatNumber(carne.meatRevenue*30);
+                    document.getElementById('resumenSinDiario').innerHTML = '-';
+                    document.getElementById('resumenSinMensual').innerHTML = '-';
+                    document.getElementById('resumenTitulo').innerHTML = `🥩 Carnicería Tier ${tier}`;
+                }
+            } else if (tipo === 'producto') {
+                const prod = resultados.productos.find(p => p.tier === tier);
+                if (prod) {
+                    document.getElementById('resumenConDiario').innerHTML = formatNumber(prod.profitConComida);
+                    document.getElementById('resumenConMensual').innerHTML = formatNumber(prod.profitConComida*30);
+                    document.getElementById('resumenSinDiario').innerHTML = formatNumber(prod.profitSinComida);
+                    document.getElementById('resumenSinMensual').innerHTML = formatNumber(prod.profitSinComida*30);
+                    document.getElementById('resumenTitulo').innerHTML = `🧺 Producto Tier ${tier}`;
+                }
+            }
+        };
+        radios.forEach(radio => radio.addEventListener('change', updateResumenFromRadio));
+        if (radios.length > 0) {
+            radios[0].checked = true;
+            updateResumenFromRadio();
+        }
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', refresh);
+    window.addEventListener('load', refresh);
+</script>
+</body>
+</html>
